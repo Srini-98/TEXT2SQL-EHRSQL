@@ -1,6 +1,13 @@
 ## Inference 
 The inference and evaluation is performed on the official development set released in https://github.com/glee4810/EHRSQL.
-Download the datasets and use the [processing](process.py) script to get a processed version of the developmnet set. Perform this processing for both the datasets. 
+Download the datasets and use the [processing](process.py) script to get a processed version of the development set. Perform this processing for both the datasets. 
+
+Name the files: 
+1. 'valid_mimic.json' (for the downloaded original file)
+2. 'processed_valid_mimic.json' (for the processed file)
+
+1. 'valid_eicu.json' (for the downloaded original file)
+2. 'processed_valid_eicu.json' (for the processed file)
 
 
 ### One Step Inference ( No tables or keys are predicted):
