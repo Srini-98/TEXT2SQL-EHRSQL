@@ -1,7 +1,7 @@
 import json
 
 if __name__ == "__main__":
-    with open("valid.json" , "r") as f:
+    with open("valid_mimic.json" , "r") as f:
         data = json.load(f)
     
     output = []
@@ -13,5 +13,5 @@ if __name__ == "__main__":
         output.append(dic)
     
 
-    with open("./valid_processed.json" , "w") as g:
+    with open("./processed_valid_mimic.json" , "w") as g:
         json.dump(output , g)
