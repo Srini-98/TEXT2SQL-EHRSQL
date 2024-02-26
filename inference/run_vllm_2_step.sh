@@ -16,14 +16,14 @@ if [ "$sub_data_mimic" = "eicu" ]; then
     table_st=tables_eicu.txt
     foreign_st=foreign_keys_eicu.txt
     table_func_file=tables_func_eicu.json
-    dataset_path=
-    valid_original=
+    dataset_path=$4
+    valid_original=$5
 else
   table_st=tables.txt
   foreign_st=foreign_keys.txt
   table_func_file=tables_func_mimic.json
-  dataset_path=
-  valid_original=
+  dataset_path=$4
+  valid_original=$5
 fi
 
 echo dataset path $dataset_path

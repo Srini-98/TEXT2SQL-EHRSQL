@@ -142,7 +142,7 @@ def main(
     
     print("number of questions" , len(question_lis))
     data = load_dataset("json", data_files= dataset_path)
-    print(data)
+    
     out_eval = {}
     start_ind = 0
     
