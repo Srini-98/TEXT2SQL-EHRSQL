@@ -21,3 +21,4 @@ bash run_multi.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_mu
 Note: Pass the path to the model , the learning rate , the dataset path , output directory and model name as parameters to the script. 
 
 ## Inference
+Go to the inference folder for instructions to perform inference on the development set.
