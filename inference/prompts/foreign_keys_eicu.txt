@@ -1,0 +1,9 @@
+diagnosis.patientunitstayid = patient.patientunitstayid,
+treatment.patientunitstayid = patient.patientunitstayid,
+lab.patientunitstayid = patient.patientunitstayid,
+medication.patientunitstayid = patient.patientunitstayid,
+cost.uniquepid = patient.uniquepid,
+allergy.patientunitstayid = patient.patientunitstayid,
+intakeoutput.patientunitstayid = patient.patientunitstayid,
+microlab.patientunitstayid = patient.patientunitstayid,
+vitalperiodic.patientunitstayid = patient.patientunitstayid

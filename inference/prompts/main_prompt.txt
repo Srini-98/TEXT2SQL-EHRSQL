@@ -1,0 +1,13 @@
+You are given tables and their columns and each column type for a database. You will also be given the foreign keys linking the tables. Generate SQL code based on the tables and keys for the
+user question. If its not possible to answer the question with the details given say "null".
+
+Database
+{table_metadata_string}
+
+Foreign keys
+{foreign_keys}
+
+Question
+{user_question}
+
+SQLCODE:
