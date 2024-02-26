@@ -6,7 +6,7 @@ device=0
 echo "starting inference"
 data_used=$1
 sub_data_mimic=$2
-model_path=$3
+model_path=$5
 count=1
 
 table_st=""  
@@ -16,14 +16,14 @@ if [ "$sub_data_mimic" = "eicu" ]; then
     table_st=tables_eicu.txt
     foreign_st=foreign_keys_eicu.txt
     table_func_file=tables_func_eicu.json
-    dataset_path=$4
-    valid_original=$5
+    dataset_path=$3
+    valid_original=$4
 else
   table_st=tables.txt
   foreign_st=foreign_keys.txt
   table_func_file=tables_func_mimic.json
-  dataset_path=$4
-  valid_original=$5
+  dataset_path=$3
+  valid_original=$4
 fi
 
 echo dataset path $dataset_path
