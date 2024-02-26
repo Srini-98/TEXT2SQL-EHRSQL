@@ -44,8 +44,9 @@ def get_args():
     parser.add_argument("--model_path" , type=str , required=True)
     parser.add_argument("--dataset" , type=str , required=True)
     parser.add_argument('--output_dir', type=str, required=True)
-    parser.add_argument("--learning_rate" , required=True)
-
+    parser.add_argument("--learning_rate" , required=True , type=float)
+    parser.add_argument("--model_type" , type=str , required=True , choices=['mistral', 'llama2'])
+    parser.add_argument("--dataset_name" , type=str , required=True , choices=['mimic', 'eicu'])
     args = parser.parse_args()
     return args
 
@@ -218,6 +219,15 @@ def disable_model_dropout(model):
 if __name__ == "__main__":
 
     args = get_args()
+
+    model_type = args.model_type
+    if model_type == "mistral":
+        wrap_layer = MistralDecoderLayer
+    elif model_type == "llama2":
+        wrap_layer = LlamaDecoderLayer
+
+    dataset_name = args.dataset_name
+
     local_rank = int(os.environ['LOCAL_RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
 
@@ -252,7 +262,7 @@ if __name__ == "__main__":
     auto_wrap_policy = functools.partial(
         transformer_auto_wrap_policy,
         transformer_layer_cls={
-            MistralDecoderLayer
+            wrap_layer
         },
     )
 
@@ -277,8 +287,8 @@ if __name__ == "__main__":
     dataset = datasets.load_dataset("json" , data_files=train_ds , split="train")
     main_dataset = dataset.train_test_split(test_size=0.1 , seed=seed)
 
-    train_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['train'])
-    eval_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['test'])
+    train_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['train'] , dataset_name)
+    eval_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['test'] , dataset_name)
     
     collator = DataCollatorForSuperVisedDataset(tokenizer)
 

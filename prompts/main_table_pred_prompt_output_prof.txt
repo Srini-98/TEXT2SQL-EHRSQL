@@ -1,0 +1,9 @@
+<function_call> get_schema({function_lis}){get_keys}</function_call> 
+
+Table schema:
+{schema}
+Foreign Keys:
+{foreign_keys}
+
+SQLCODE:
+{code}
