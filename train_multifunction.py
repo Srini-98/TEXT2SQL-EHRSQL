@@ -22,6 +22,8 @@ from torch.distributed.fsdp.fully_sharded_data_parallel import ShardingStrategy
 from torch.distributed.fsdp.wrap import transformer_auto_wrap_policy
 
 from transformers.models.mistral.modeling_mistral import MistralDecoderLayer
+from transformers.models.llama.modeling_llama import LlamaDecoderLayer
+
 import functools
 import torch.distributed as dist
 import wandb

@@ -22,6 +22,8 @@ from torch.distributed.fsdp.fully_sharded_data_parallel import ShardingStrategy
 from torch.distributed.fsdp.wrap import transformer_auto_wrap_policy
 
 from transformers.models.mistral.modeling_mistral import MistralDecoderLayer
+from transformers.models.llama.modeling_llama import LlamaDecoderLayer
+
 import functools
 import torch.distributed as dist
 import wandb
@@ -43,7 +45,7 @@ def get_args():
     parser.add_argument("--dataset" , type=str , required=True)
     parser.add_argument('--output_dir', type=str, required=True)
     parser.add_argument("--learning_rate" , required=True)
-
+    parser.add_argument("--model_name" , type=str , required=True , choices=['mistral', 'llama2'])
     args = parser.parse_args()
     return args
 
@@ -216,6 +218,13 @@ def disable_model_dropout(model):
 if __name__ == "__main__":
 
     args = get_args()
+
+    model_type = args.model_name
+    if model_type == "mistral":
+        wrap_layer = MistralDecoderLayer
+    elif model_type == "llama2":
+        wrap_layer = LlamaDecoderLayer
+    
     local_rank = int(os.environ['LOCAL_RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
 
@@ -251,7 +260,7 @@ if __name__ == "__main__":
     auto_wrap_policy = functools.partial(
         transformer_auto_wrap_policy,
         transformer_layer_cls={
-            MistralDecoderLayer
+            wrap_layer
         },
     )
 
