@@ -1,0 +1,12 @@
+{
+    "patient": "CREATE TABLE patient(\nuniquepid text,\npatienthealthsystemstayid number,\npatientunitstayid number PRIMARY KEY,\ngender text,\nage text,\nethnicity text,\nhospitalid number,\nwardid number,\nadmissionheight number,\nadmissionweight number,\ndischargeweight number,\nhospitaladmittime time,\nhospitaladmitsource text,\nunitadmittime time,\nunitdischargetime time,\nhospitaldischargetime time,\nhospitaldischargestatus text\n);",
+    "diagnosis": "CREATE TABLE diagnosis(\ndiagnosisid number PRIMARY KEY,\npatientunitstayid number,\ndiagnosisname text,\ndiagnosistime time,\nicd9code text\n);",
+    "treatment": "CREATE TABLE treatment(\ntreatmentid number PRIMARY KEY,\npatientunitstayid number,\ntreatmentname text,\ntreatmenttime time\n);",
+    "lab": "CREATE TABLE lab(\nlabid number PRIMARY KEY,\npatientunitstayid number,\nlabname text,\nlabresult number,\nlabresulttime time\n);",
+    "medication": "CREATE TABLE medication(\nmedicationid number PRIMARY KEY,\npatientunitstayid number,\ndrugname text,\ndosage text,\nrouteadmin text,\ndrugstarttime time,\ndrugstoptime time\n);",
+    "cost": "CREATE TABLE cost(\ncostid number PRIMARY KEY,\nuniquepid text,\npatienthealthsystemstayid number,\neventtype text,\neventid number,\nchargetime time,\ncost number\n);",
+    "allergy": "CREATE TABLE allergy(\nallergyid number PRIMARY KEY,\npatientunitstayid number,\ndrugname text,\nallergyname text,\nallergytime time\n);",
+    "intakeoutput": "CREATE TABLE intakeoutput(\nintakeoutputid number PRIMARY KEY,\npatientunitstayid number,\ncellpath text,\ncelllabel text,\ncellvaluenumeric number,\nintakeoutputtime time\n);",
+    "microlab": "CREATE TABLE microlab(\nmicrolabid number PRIMARY KEY,\npatientunitstayid number,\nculturesite text,\norganism text,\nculturetakentime time\n);",
+    "vitalperiodic": "CREATE TABLE vitalperiodic(\nvitalperiodicid number PRIMARY KEY,\npatientunitstayid number,\ntemperature number,\nsao2 number,\nheartrate number,\nrespiration number,\nsystemicsystolic number,\nsystemicdiastolic number,\nsystemicmean number,\nobservationtime time\n);"
+}

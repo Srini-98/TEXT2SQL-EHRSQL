@@ -1,0 +1,19 @@
+{
+    "patients": "CREATE TABLE PATIENTS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nGENDER text,\nDOB time,\nDOD time\n);",
+    "admissions": "CREATE TABLE ADMISSIONS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nADMITTIME time,\nDISCHTIME time,\nADMISSION_TYPE text,\nADMISSION_LOCATION text,\nDISCHARGE_LOCATION text,\nINSURANCE text,\nLANGUAGE text,\nMARITAL_STATUS text,\nETHNICITY text,\nAGE number\n);",
+    "d_icd_diagnoses": "CREATE TABLE D_ICD_DIAGNOSES(\nROW_ID number PRIMARY KEY,\nICD9_CODE text,\nSHORT_TITLE text,\nLONG_TITLE text\n);",
+    "d_icd_procedures": "CREATE TABLE D_ICD_PROCEDURES(\nROW_ID number PRIMARY KEY,\nICD9_CODE text,\nSHORT_TITLE text,\nLONG_TITLE text\n);",
+    "d_labitems": "CREATE TABLE D_LABITEMS(\nROW_ID number PRIMARY KEY,\nITEMID number,\nLABEL text\n);",
+    "d_items": "CREATE TABLE D_ITEMS(\nROW_ID number PRIMARY KEY,\nITEMID number,\nLABEL text,\nLINKSTO text\n);",
+    "diagnoses_icd": "CREATE TABLE DIAGNOSES_ICD(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICD9_CODE text,\nCHARTTIME time\n);",
+    "procedures_icd": "CREATE TABLE PROCEDURES_ICD(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICD9_CODE text,\nCHARTTIME time\n);",
+    "labevents": "CREATE TABLE LABEVENTS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nITEMID number,\nCHARTTIME time,\nVALUENUM number,\nVALUEUOM text\n);",
+    "prescriptions": "CREATE TABLE PRESCRIPTIONS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nSTARTDATE time,\nENDDATE time,\nDRUG text,\nDOSE_VAL_RX text,\nDOSE_UNIT_RX text,\nROUTE text\n);",
+    "cost": "CREATE TABLE COST(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nEVENT_TYPE text,\nEVENT_ID number,\nCHARGETIME time,\nCOST number\n);",
+    "chartevents": "CREATE TABLE CHARTEVENTS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICUSTAY_ID number,\nITEMID number,\nCHARTTIME time,\nVALUENUM number,\nVALUEUOM text\n);",
+    "inputevents_cv": "CREATE TABLE INPUTEVENTS_CV(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICUSTAY_ID number,\nCHARTTIME time,\nITEMID number,\nAMOUNT number\n);",
+    "outputevents": "CREATE TABLE OUTPUTEVENTS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICUSTAY_ID number,\nCHARTTIME time,\nITEMID number,\nVALUE number\n);",
+    "microbiologyevents": "CREATE TABLE MICROBIOLOGYEVENTS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nCHARTTIME time,\nSPEC_TYPE_DESC text,\nORG_NAME text\n);",
+    "icustays": "CREATE TABLE ICUSTAYS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICUSTAY_ID number,\nFIRST_CAREUNIT text,\nLAST_CAREUNIT text,\nFIRST_WARDID number,\nLAST_WARDID number,\nINTIME time,\nOUTTIME time\n);",
+    "transfers": "CREATE TABLE TRANSFERS(\nROW_ID number PRIMARY KEY,\nSUBJECT_ID number,\nHADM_ID number,\nICUSTAY_ID number,\nEVENTTYPE text,\nCAREUNIT text,\nWARDID number,\nINTIME time,\nOUTTIME time\n);"
+}

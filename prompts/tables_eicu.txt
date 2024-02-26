@@ -1,0 +1,100 @@
+CREATE TABLE patient(
+uniquepid text,
+patienthealthsystemstayid number,
+patientunitstayid number PRIMARY KEY,
+gender text,
+age text,
+ethnicity text,
+hospitalid number,
+wardid number,
+admissionheight number,
+admissionweight number,
+dischargeweight number,
+hospitaladmittime time,
+hospitaladmitsource text,
+unitadmittime time,
+unitdischargetime time,
+hospitaldischargetime time,
+hospitaldischargestatus text
+);
+
+CREATE TABLE diagnosis(
+diagnosisid number PRIMARY KEY,
+patientunitstayid number,
+diagnosisname text,
+diagnosistime time,
+icd9code text
+);
+
+CREATE TABLE treatment(
+treatmentid number PRIMARY KEY,
+patientunitstayid number,
+treatmentname text,
+treatmenttime time
+);
+
+CREATE TABLE lab(
+labid number PRIMARY KEY,
+patientunitstayid number,
+labname text,
+labresult number,
+labresulttime time
+);
+
+CREATE TABLE medication(
+medicationid number PRIMARY KEY,
+patientunitstayid number,
+drugname text,
+dosage text,
+routeadmin text,
+drugstarttime time,
+drugstoptime time
+);
+
+CREATE TABLE cost(
+costid number PRIMARY KEY,
+uniquepid text,
+patienthealthsystemstayid number,
+eventtype text,
+eventid number,
+chargetime time,
+cost number
+);
+
+CREATE TABLE allergy(
+allergyid number PRIMARY KEY,
+patientunitstayid number,
+drugname text,
+allergyname text,
+allergytime time
+);
+
+CREATE TABLE intakeoutput(
+intakeoutputid number PRIMARY KEY,
+patientunitstayid number,
+cellpath text,
+celllabel text,
+cellvaluenumeric number,
+intakeoutputtime time
+);
+
+CREATE TABLE microlab(
+microlabid number PRIMARY KEY,
+patientunitstayid number,
+culturesite text,
+organism text,
+culturetakentime time
+);
+
+CREATE TABLE vitalperiodic(
+vitalperiodicid number PRIMARY KEY,
+patientunitstayid number,
+temperature number,
+sao2 number,
+heartrate number,
+respiration number,
+systemicsystolic number,
+systemicdiastolic number,
+systemicmean number,
+observationtime time
+);
