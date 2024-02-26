@@ -1,6 +1,14 @@
 # TEXT2SQL-EHRSQL
 This work builds on top of the datasets released with https://github.com/glee4810/EHRSQL. Use the instructions mentioned in the link to download the database and the datasets. 
 
+## Set up Environment
+
+Set up conda environment using (python>=3.10):
+
+```
+pip install -r requirements.txt
+```
+
 ## Training
 Two models are used in this work - Mistral and Llama 2. Download the models from the link below:
 Mistral7B : https://huggingface.co/mistralai/Mistral-7B-v0.1
