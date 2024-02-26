@@ -164,81 +164,71 @@ def main(
     for i in range(0 , len(data['train']) , batch_size):
         user_prompt = []
         for k in range(0 , batch_size):
-            if data_used == "mimic3":
-                if inference_stage == 1:
-                    element = format_input(data['train'][i+k]['question'] , prompt_input , table_lis) if i + k < len(data['train']) else None
-                else:
-                    element = format_input_code(question=data['train'][i+k]['question'] , foreign_keys=foreign_keys ,  prompt=prompt_input , table_format=table_lis , fn_call= predicted_tables[i+k], table_json=table_json , tup_lis = tup_lis) if i + k < len(data['train']) else None
+            if inference_stage == 1:
+                element = format_input(data['train'][i+k]['question'] , prompt_input , table_lis) if i + k < len(data['train']) else None
+            else:
+                element = format_input_code(question=data['train'][i+k]['question'] , foreign_keys=foreign_keys ,  prompt=prompt_input , table_format=table_lis , fn_call= predicted_tables[i+k], table_json=table_json , tup_lis = tup_lis) if i + k < len(data['train']) else None
 
-                #print(element)
-                if element is not None and element != "ERROR":
-                    user_prompt.append(element)
-                else:
-                    print("none element")
-                    print(element)
-                    # if inference_stage==1:
-                    #     output_file.write("ERROR- " + str(i)  + "\n--------------------------------------------\n")
-        
-
-        # if i == 0:
-        #     print(user_prompt[0])
-            
+            if element is not None and element != "ERROR":
+                user_prompt.append(element)
+            else:
+                print("none element")
+                print(element)
         outputs = model.generate(user_prompt, sampling_params=sampling_param)
-        if data_used == "mimic3":
-            for ct , output in enumerate(outputs):
-                output_lis = []
-                for o in output.outputs:
-                    final_output = o.text
-                    output_lis.append(final_output)
 
-                    if inference_stage == 1:
-                        print("final output" , final_output)
-                        output_file.write(final_output + "</function_call>" + "\n")
-                    else:
-                        try:
-                            code = final_output.split("SQLCODE:\n")[1]
-                        except:
-                            print("final output due to ERROR" , element + final_output)
-                            code = "ERROR"
+        for ct , output in enumerate(outputs):
+            output_lis = []
+            for o in output.outputs:
+                final_output = o.text
+                output_lis.append(final_output)
 
-                        print("final output" , code)
-                        #output_file.write(user_prompt[ct] + final_output + "\n--------------------------------------------\n")
+                if inference_stage == 1:
+                    print("final output" , final_output)
+                    output_file.write(final_output + "</function_call>" + "\n")
+                else:
+                    try:
+                        code = final_output.split("SQLCODE:\n")[1]
+                    except:
+                        print("final output due to ERROR" , element + final_output)
+                        code = "ERROR"
 
-                        log_probs = output.outputs[0].logprobs
-                        final_scores = []
-                        t = ()
-                        for log_token in log_probs:
-                            lis = []
-                            scores = []
-                            for tok , val in log_token.items():
-                                lis.append(val)
-                            scores.append(lis)
-                            t = t + (torch.tensor(scores),)
+                    print("final output" , code)
+                    
+                    log_probs = output.outputs[0].logprobs
+                    final_scores = []
+                    t = ()
+                    for log_token in log_probs:
+                        lis = []
+                        scores = []
+                        for tok , val in log_token.items():
+                            lis.append(val)
+                        scores.append(lis)
+                        t = t + (torch.tensor(scores),)
 
-                        logits = torch.stack(t, dim=1)[::int(num_beams/1)]
-                        logits = logits.cpu()
-                        output_prob = torch.softmax(logits, dim=2).float()
-                        log_prob = torch.log_softmax(logits, dim=2).float()
-                        output_prob = torch.softmax(logits, dim=2).float()
-                        log_prob = torch.log_softmax(logits, dim=2).float()
-                        sequences_entropy = (torch.sum(output_prob * log_prob, dim=2) * (-1) ).numpy()
-                        result = {}
-                        result['question'] = question_lis[start_ind]
-                        result['real'] = label_lis[start_ind]
-                        result['pred'] = code
-                        entropy = sequences_entropy[0].tolist()
-                        result['sequence_entropy'] = tuple(entropy)
-                        result['db_id'] = db_id[start_ind]
-                        result['is_impossible'] =  impossible_lis[start_ind]
-                        out_eval[id[start_ind]] = result
-                        start_ind = start_ind + 1
+                    logits = torch.stack(t, dim=1)[::int(num_beams/1)]
+                    logits = logits.cpu()
+                    output_prob = torch.softmax(logits, dim=2).float()
+                    log_prob = torch.log_softmax(logits, dim=2).float()
+                    output_prob = torch.softmax(logits, dim=2).float()
+                    log_prob = torch.log_softmax(logits, dim=2).float()
+                    sequences_entropy = (torch.sum(output_prob * log_prob, dim=2) * (-1) ).numpy()
+                    result = {}
+                    result['question'] = question_lis[start_ind]
+                    result['real'] = label_lis[start_ind]
+                    result['pred'] = code
+                    entropy = sequences_entropy[0].tolist()
+                    result['sequence_entropy'] = tuple(entropy)
+                    result['db_id'] = db_id[start_ind]
+                    result['is_impossible'] =  impossible_lis[start_ind]
+                    out_eval[id[start_ind]] = result
+                    start_ind = start_ind + 1
 
-                if i == 0 and flag == 0:
-                    flag = 1
-                    print("output is")
-                    print(user_prompt[0] + final_output)
-                print("-------------------------------------")
-    
+            if i == 0 and flag == 0:
+                flag = 1
+                print("output is")
+                print(user_prompt[0] + final_output)
+            print("-------------------------------------")
+
     if inference_stage == 2:
         with open(output_path , "w" ) as f:
             json.dump(out_eval , f)
