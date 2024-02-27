@@ -15,10 +15,10 @@ torch.cuda.manual_seed(42)
 torch.manual_seed(42)
 table_lis = []
 
-with open("./prompts/main_multi_tool_prompt_input.txt", "r") as f:
+with open("./prompts/main_multi_tool_prompt_input_prof.txt", "r") as f:
     prompt_input = f.read()
 
-with open("./prompts/main_multi_tool_prompt_output.txt", "r") as g:
+with open("./prompts/main_multi_tool_prompt_output_prof.txt", "r") as g:
     prompt_output = g.read()
 
 
@@ -66,8 +66,6 @@ def format_input_code(question , prompt , foreign_keys ,  table_format , fn_call
     return st
 
     
-
-
 def load_model(model_name, tp_size=1):
     llm = LLM(model_name, tensor_parallel_size=tp_size)
     return llm
@@ -103,7 +101,7 @@ def main(
     with open(f"./prompts/{foreign_st}" , "r") as h:
         foreign_keys = h.read().split(",\n")
 
-    with open(f"./mimic_data/{table_func_file}" , "r") as f:
+    with open(f"./table_data/{table_func_file}" , "r") as f:
         table_json = json.load(f)
     
 
