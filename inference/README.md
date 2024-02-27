@@ -15,12 +15,12 @@ Run the following command for starting the inference process:
 
 ##### Mimic3
 ```
-bash run_vllm_basic.sh mimic3 mimic3 valid_mimic.json processed_valid_mimic.json model_path
+bash run_vllm_basic.sh mimic3 mimic3 processed_valid_mimic.json valid_mimic.json model_path
 ```
 
 ##### EICU
 ```
-bash run_vllm_basic.sh eicu eicu valid_eicu.json processed_valid_eicu.json model_path
+bash run_vllm_basic.sh eicu eicu processed_valid_eicu.json valid_eicu.json model_path
 ```
 
 Note: model_path here refers to the path of the finetuned checkpoint from the training process. 
@@ -31,10 +31,10 @@ Run the following command for starting the inference process:
 
 ##### Mimic3
 ```
-bash run_vllm_2_step.sh mimic3 mimic3 valid_mimic.json processed_valid_mimic.json model_path
+bash run_vllm_2_step.sh mimic3 mimic3 processed_valid_mimic.json valid_mimic.json model_path
 ```
 
 ##### EICU
 ```
-bash run_vllm_2_step.sh eicu eicu valid_eicu.json processed_valid_eicu.json model_path
+bash run_vllm_2_step.sh eicu eicu processed_valid_eicu.json valid_eicu.json  model_path
 ```
