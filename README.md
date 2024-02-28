@@ -47,7 +47,7 @@ The same steps from the previous section have to be followed for multi funciton 
 ##### Model Mistral, Dataset Mimic:
 
 ```
-bash run_multi.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_multistep.json ./mistral_multitool_prompt/ mistral mimic
+bash run_multi.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_multistep.json ./mistral_multitool_prompt_mimic/ mistral mimic
 ```
 
 ## Inference
