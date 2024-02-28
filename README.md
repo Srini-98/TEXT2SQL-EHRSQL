@@ -17,7 +17,7 @@ Llama27B  : https://huggingface.co/meta-llama/Llama-2-7b
 The training to reproduce the results can be performed using the following command:
 
 #### No Predicting tables or keys 
-Note: Pass the path of the model, the learning rate, the dataset path, output directory, model name and dataset name as parameters to the script.  The training set for both the datasets are assumed to be named 'train_mimic.json' , 'train_eicu.json'. Change the name in the basg command according to the file name.
+Note: Pass the path of the model, the learning rate, the dataset path, output directory, model name and dataset name as parameters to the script.  The training set for both the datasets are assumed to be named 'train_mimic.json' , 'train_eicu.json'. Change the name in the bash command according to the file name.
 
 ##### Model Mistral, Dataset Mimic:
 ```
