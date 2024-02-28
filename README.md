@@ -20,7 +20,7 @@ The training to reproduce the results can be performed using the following comma
 ```
 bash run.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train.json ./mistral_main_prompt/ mistral
 ```
-Note: Pass the path to the model , the learning rate , the dataset path , output directory and model name as parameters to the script. 
+Note: Pass the path of the model , the learning rate , the dataset path , output directory and model name as parameters to the script. 
 
 #### Predicting tables and keys 
 ```
