@@ -31,12 +31,12 @@ bash run.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_eicu.jso
 
 ##### Model Llama2, Dataset Mimic:
 ```
-bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_mimic.json ./llama2_main_prompt_mimic/ mistral eicu
+bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_mimic.json ./llama2_main_prompt_mimic/ llama2 mimic
 ```
 
 ##### Model Llama2, Dataset EICU:
 ```
-bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_eicu.json ./llama2_main_prompt_eicu/ mistral eicu
+bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_eicu.json ./llama2_main_prompt_eicu/ llama2 eicu
 ```
 
 #### Predicting tables and keys 
