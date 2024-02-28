@@ -1,4 +1,5 @@
 import random 
+import argparse
 
 from core.supervised_dataset_multitool import (
     DEFAULT_EOS_TOKEN,
@@ -23,7 +24,6 @@ from torch.distributed.fsdp.wrap import transformer_auto_wrap_policy
 
 from transformers.models.mistral.modeling_mistral import MistralDecoderLayer
 from transformers.models.llama.modeling_llama import LlamaDecoderLayer
-
 import functools
 import torch.distributed as dist
 import wandb
@@ -35,25 +35,9 @@ import math
 import numpy as np 
 from datetime import datetime
 from transformers import AutoModelForCausalLM , AutoTokenizer
-import argparse
-
-def get_args():
-    parser = argparse.ArgumentParser(description='parameters for FSDP training')
-    
-    # Add arguments
-    parser.add_argument("--model_path" , type=str , required=True)
-    parser.add_argument("--dataset" , type=str , required=True)
-    parser.add_argument('--output_dir', type=str, required=True)
-    parser.add_argument("--learning_rate" , required=True , type=float)
-    parser.add_argument("--model_type" , type=str , required=True , choices=['mistral', 'llama2'])
-    parser.add_argument("--dataset_name" , type=str , required=True , choices=['mimic', 'eicu'])
-    args = parser.parse_args()
-    return args
 
 def setup_model(model_name , max_length):
-    #config = transformers.AutoConfig.from_pretrained(model_name)
-    #config.use_cache = False
-
+   
     print("model name" , model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name ,
                                                 torch_dtype=torch.bfloat16
@@ -216,8 +200,20 @@ def disable_model_dropout(model):
         if isinstance(module , torch.nn.Dropout):
             module.p = 0.0
 
-if __name__ == "__main__":
+def get_args():
+    parser = argparse.ArgumentParser(description='parameters for FSDP training')
+    
+    # Add arguments
+    parser.add_argument("--model_path" , type=str , required=True)
+    parser.add_argument("--dataset" , type=str , required=True)
+    parser.add_argument('--output_dir', type=str, required=True)
+    parser.add_argument("--learning_rate" , required=True , type=float)
+    parser.add_argument("--model_type" , type=str , required=True , choices=['mistral', 'llama2'])
+    parser.add_argument("--dataset_name" , type=str , required=True , choices=['mimic', 'eicu'])
+    args = parser.parse_args()
+    return args
 
+if __name__ == "__main__":
     args = get_args()
 
     model_type = args.model_type
@@ -227,9 +223,11 @@ if __name__ == "__main__":
         wrap_layer = LlamaDecoderLayer
 
     dataset_name = args.dataset_name
-
     local_rank = int(os.environ['LOCAL_RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
+
+    if local_rank == 0:
+        print("args are" , args)
 
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
@@ -237,6 +235,8 @@ if __name__ == "__main__":
     dist.init_process_group("nccl", rank=local_rank, world_size=world_size)
 
     model_name = args.model_path
+    
+
     scheduler_type = "cosine"
     seed = 42
     transformers.set_seed(42)
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     output_dir = args.output_dir
     date_of_run = datetime.now().strftime("%Y-%m-%d-%I_%M_%S_%p")
     max_length = 4096
-    disable_dropout = False 
+    disable_dropout = False  
     gradient_checkpointing = True
     clip_gradients = True
     shuffle = True
@@ -257,12 +257,15 @@ if __name__ == "__main__":
     gradient_clipping=1.0
     train_on_inputs = False
 
+
     model , tokenizer = setup_model(model_name , max_length)
     num_params = sum([p.numel() for p in model.parameters()])
     auto_wrap_policy = functools.partial(
         transformer_auto_wrap_policy,
         transformer_layer_cls={
-            wrap_layer
+           wrap_layer
+           #LlamaDecoderLayer
+           #MistralDecoderLayer
         },
     )
 
@@ -284,11 +287,17 @@ if __name__ == "__main__":
     optimizer = get_optimizer(model , lr , weight_decay)
 
     train_ds = args.dataset
-    dataset = datasets.load_dataset("json" , data_files=train_ds , split="train")
+
+    dataset = datasets.load_dataset("json" , data_files=train_ds , split="train" , download_mode='force_redownload')
+    dataset = dataset.shuffle(seed=seed)
     main_dataset = dataset.train_test_split(test_size=0.1 , seed=seed)
+
+    if local_rank == 0:
+        print("dataset split" , main_dataset)
 
     train_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['train'] , dataset_name)
     eval_dataset = SuperVisedDataset(train_on_inputs , tokenizer , main_dataset['test'] , dataset_name)
+    
     
     collator = DataCollatorForSuperVisedDataset(tokenizer)
 
@@ -302,7 +311,8 @@ if __name__ == "__main__":
         collator=collator,
         batch_size=train_batch_size
         )
-        
+    
+    #WRITE VAL HERE. 
     eval_sampler , val_loader = get_dataloader(
         max_length=max_length,
         world_size=world_size,
@@ -313,7 +323,6 @@ if __name__ == "__main__":
         collator=collator,
         batch_size=eval_batch_size
     )
-    
     total_steps_per_epoch = len(train_dataloader)
 
     max_steps = total_steps_per_epoch * epochs
@@ -321,15 +330,14 @@ if __name__ == "__main__":
 
     if local_rank == 0:
         run = wandb.init(
-            project=f"training-{model_name}-fsdp-dataset-{train_ds}-batch_size-{train_batch_size}-lr-{lr}-epochs-{epochs}",
-            name='fsdp',
+            project="fsdp",
+            name=f"training-{model_type}-fsdp-dataset-{dataset_name}-batch_size-{train_batch_size}-lr-{lr}-epochs-{epochs}",
             config={
                 "model_name": model_name,
                 "dataset_size": len(train_dataset),
                 "weight_decay": weight_decay,
                 "learning_rate": lr,
                 "clip_gradients": clip_gradients,
-                "learning_rate": lr,
                 "epochs": epochs,
                 "batch_size": train_batch_size,
                 "total_batch_size": train_batch_size * world_size,
@@ -404,6 +412,6 @@ if __name__ == "__main__":
                 )
 
                 model.train()
-    
+
     #save final model
     save_model(local_rank, model, tokenizer, output_dir, epochs, "final")      

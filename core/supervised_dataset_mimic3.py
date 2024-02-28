@@ -15,14 +15,7 @@ DEFAULT_PAD_TOKEN = "<|pad|>"
 DEFAULT_EOS_TOKEN = "<|endoftext|>"
 DEFAULT_UNK_TOKEN = "<|unk|>"
 
-with open("./prompts/main_prompt.txt", "r") as f:
-    prompt = f.read()
 
-with open("./prompts/tables_eicu.txt" , "r") as g:
-    table_format = g.read()
-
-with open("./prompts/foreign_keys_eicu.txt" , "r") as h:
-    foreign_keys = h.read().split(",\n")
 
 def format_input(st , prompt , table_format , foreign_keys):
     prompt = prompt.format(user_question=st,
@@ -48,7 +41,7 @@ def _tokenize_fn(strings: Sequence[str] , tokenizer: transformers.PreTrainedToke
         labels_lens = labels_lens,
     )
 
-def preprocess(train_on_inputs: bool , samples: Sequence[str] , tokenizer: transformers.PreTrainedTokenizer) -> Dict:
+def preprocess(train_on_inputs: bool , samples: Sequence[str] , tokenizer: transformers.PreTrainedTokenizer , prompt , table_format , foreign_keys) -> Dict:
     sources = [f"{format_input(st , prompt , table_format , foreign_keys)}" for st in samples['question']]
     targets = [f"{format_output(st)}{tokenizer.eos_token}" for st in samples['query']]
     examples = [s + t for s , t in zip(sources , targets)]
@@ -73,7 +66,7 @@ def _filter_tokenize_fn(strings: Sequence[str] , tokenizer: transformers.PreTrai
             samples.append(False)
     return samples
 
-def filter_long_samples(samples: Sequence[str] , tokenizer: transformers.PreTrainedTokenizer) -> Dict:
+def filter_long_samples(samples: Sequence[str] , tokenizer: transformers.PreTrainedTokenizer , prompt , table_format , foreign_keys) -> Dict:
     sources = [f"{format_input(st , prompt , table_format , foreign_keys)}" for st in samples['question']]
     targets = [f"{format_output(st)}{tokenizer.eos_token}" for st in samples['query']]
     examples = [s + t for s , t in zip(sources , targets)]
@@ -82,18 +75,37 @@ def filter_long_samples(samples: Sequence[str] , tokenizer: transformers.PreTrai
 
 class SuperVisedDataset(Dataset):
 
-    def __init__(self , train_on_inputs: bool , tokenizer: transformers.PreTrainedTokenizer , dataset):
-
+    def __init__(self , train_on_inputs: bool , tokenizer: transformers.PreTrainedTokenizer , dataset , dataset_name):
         super(SuperVisedDataset , self).__init__()
         workers = math.ceil(os.cpu_count() / dist.get_world_size())
         logging.warning(f"Tokenizing with {workers} workers")
+        
+        if dataset_name == "mimic":
+            table_name = "tables.txt"
+            foreign_keys = "foreign_keys.txt"
+        elif dataset_name == "eicu":
+            table_name = "tables_eicu.txt"
+            foreign_keys = "foreign_keys_eicu.txt"
+
+        print("table name" , table_name)
+        print("foreign keys" , foreign_keys)
+        
+        with open("./prompts/main_prompt_prof.txt", "r") as f:
+            prompt = f.read()
+
+        with open(f"./prompts/{table_name}" , "r") as g:
+            table_format = g.read()
+
+        with open(f"./prompts/{foreign_keys}" , "r") as h:
+            foreign_keys = h.read().split(",\n")
+
         dataset = dataset.filter(
-            lambda x: filter_long_samples(x , tokenizer) ,
+            lambda x: filter_long_samples(x , tokenizer , prompt , table_format , foreign_keys) ,
             batched=True,
             batch_size=1000,
             num_proc=workers
         ).map(
-            lambda x: preprocess(train_on_inputs , x , tokenizer),
+            lambda x: preprocess(train_on_inputs , x , tokenizer , prompt , table_format , foreign_keys),
             batched=True,
             batch_size=1000,
             num_proc=workers,
@@ -110,7 +122,7 @@ class SuperVisedDataset(Dataset):
             input_ids = torch.tensor(self.input_ids[idx]),
             labels = torch.tensor(self.labels[idx]),
         )
-    
+
 @dataclass
 class DataCollatorForSuperVisedDataset(object):
     """collate examples for supervised finetuning"""
@@ -133,4 +145,3 @@ class DataCollatorForSuperVisedDataset(object):
             labels = labels,
             attention_mask = input_ids.ne(self.tokenizer.pad_token_id)
         )
-
