@@ -16,11 +16,28 @@ Llama27B  : https://huggingface.co/meta-llama/Llama-2-7b
 
 The training to reproduce the results can be performed using the following command:
 
-#### No Predicting tables or keys
+#### No Predicting tables or keys 
+Note: Pass the path of the model, the learning rate, the dataset path, output directory, model name and dataset name as parameters to the script.  The training set for both the datasets are assumed to be named 'train_mimic.json' , 'train_eicu.json'. Change the name in the basg command according to the file name.
+
+##### Model Mistral, Dataset Mimic:
 ```
-bash run.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train.json ./mistral_main_prompt/ mistral
+bash run.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_mimic.json ./mistral_main_prompt_mimic/ mistral mimic
 ```
-Note: Pass the path of the model , the learning rate , the dataset path , output directory and model name as parameters to the script. 
+
+##### Model Mistral, Dataset EICU:
+```
+bash run.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_eicu.json ./mistral_main_prompt_eicu/ mistral eicu
+```
+
+##### Model Llama2, Dataset Mimic:
+```
+bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_mimic.json ./llama2_main_prompt_mimic/ mistral eicu
+```
+
+##### Model Llama2, Dataset EICU:
+```
+bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_eicu.json ./llama2_main_prompt_eicu/ mistral eicu
+```
 
 #### Predicting tables and keys 
 ```
