@@ -41,10 +41,14 @@ bash run.sh https://huggingface.co/meta-llama/Llama-2-7b 1e-5 train_eicu.json ./
 ```
 
 ### Predicting tables and keys 
+
+The same steps from the previous section have to be followed for multi funciton training. 
+
+##### Model Mistral, Dataset Mimic:
+
 ```
-bash run_multi.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_multistep.json ./mistral_multitool_prompt/ mistral
+bash run_multi.sh https://huggingface.co/mistralai/Mistral-7B-v0.1 1e-5 train_multistep.json ./mistral_multitool_prompt/ mistral mimic
 ```
-Note: Pass the path to the model , the learning rate , the dataset path , output directory and model name as parameters to the script. 
 
 ## Inference
 Go to the inference folder for instructions to perform inference on the development set.

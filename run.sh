@@ -12,4 +12,4 @@ nohup torchrun --nnodes=1 --nproc-per-node=4 --rdzv-backend=c10d --rdzv-endpoint
     --dataset $dataset_path \
     --output_dir $output_dir \
     --model_type $model_name \
-    --learning_rate  $learning_rate  --dataset_name $dataset_name> fsdp_llama_eicu_prof_prompt.txt
+    --learning_rate  $learning_rate  --dataset_name $dataset_name> fsdp_training_logs.txt

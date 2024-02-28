@@ -1,8 +1,16 @@
+model_path=$1
+learning_rate=$2
+dataset_path=$3
+output_dir=$4
+model_name=$5
+dataset_name=$6
+
+
 
 nohup torchrun --nnodes=1 --nproc-per-node=4 --rdzv-backend=c10d --rdzv-endpoint=localhost:0 \
     train_multifunction.py \
-    --model_type "mistral" \
-    --model_path "./Mistral-7B-v0.1" \
-    --dataset "./train_data_multi_tool_mimic_final.json" \
-    --output_dir "./mistral_mimic_multi_function_1e-5/" \
-    --learning_rate  1e-5 --dataset_name "mimic" > fsdp_mistral_mimic_multitool.txt
+    --model_path $model_path \
+    --dataset $dataset_path \
+    --output_dir $output_dir  \
+    --model_type $model_name \
+    --learning_rate $learning_rate --dataset_name $dataset_name > fsdp_training_logs_multi_function.txt
