@@ -60,7 +60,7 @@ Install the `func-timeout` if you have not.
 pip install func-timeout
 ```
 
-Run the following. The generated file will be in the same directory as the json input gile
+Run the following. The generated file will be in the same directory as the json input file
 ```
 ./eval/run_abstain_entropy.sh {json file from the inference step} {formatted output filename}
 ```
