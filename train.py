@@ -329,7 +329,7 @@ if __name__ == "__main__":
     if local_rank == 0:
         run = wandb.init(
             project="fsdp",
-            name=f"training-{model_type}-fsdp-dataset-{dataset_name}-batch_size-{train_batch_size}-lr-{lr}-epochs-{epochs}",
+            name=f"training-{os.path.basename(model_type)}-fsdp-{os.path.basename(dataset_name)}-bs-{train_batch_size}-lr-{lr}-E{epochs}",
             config={
                 "model_name": model_name,
                 "dataset_size": len(train_dataset),
